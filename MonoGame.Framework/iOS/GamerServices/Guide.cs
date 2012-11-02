@@ -465,7 +465,8 @@ namespace Microsoft.Xna.Framework.GamerServices
 				// Lazy load it
 				if ( matchmakerViewController == null )
 				{
-					matchmakerViewController = new GKMatchmakerViewController();
+					// RJCB - commented out for ios6 compatibility
+					// matchmakerViewController = new GKMatchmakerViewController();
 				}
 
 			    if (matchmakerViewController != null)		
