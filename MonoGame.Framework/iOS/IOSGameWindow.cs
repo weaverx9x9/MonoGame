@@ -92,6 +92,20 @@ namespace Microsoft.Xna.Framework {
 			get {
 				var bounds = _viewController.View.Bounds;
 				var screen = _viewController.View.Window.Screen;
+
+				if (_viewController is iOSGameViewController)
+				{
+					DisplayOrientation supportedOrientations = OrientationConverter.Normalize((_viewController as iOSGameViewController).SupportedOrientations);
+					if ((supportedOrientations & DisplayOrientation.LandscapeRight) != 0 || (supportedOrientations & DisplayOrientation.LandscapeLeft) != 0)
+						return new Rectangle(
+							(int)(bounds.X * screen.Scale), (int)(bounds.Y * screen.Scale),
+							(int)(Math.Max(bounds.Width, bounds.Height) * screen.Scale), (int)(Math.Min(bounds.Width, bounds.Height) * screen.Scale));
+					else
+						return new Rectangle(
+							(int)(bounds.X * screen.Scale), (int)(bounds.Y * screen.Scale),
+							(int)(Math.Min(bounds.Width, bounds.Height) * screen.Scale), (int)(Math.Max(bounds.Width, bounds.Height) * screen.Scale));
+				}
+
 				return new Rectangle(
 					(int)(bounds.X * screen.Scale), (int)(bounds.Y * screen.Scale),
 					(int)(bounds.Width * screen.Scale), (int)(bounds.Height * screen.Scale));

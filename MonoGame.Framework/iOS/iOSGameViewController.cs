@@ -110,6 +110,53 @@ namespace Microsoft.Xna.Framework {
 			get { return (iOSGameView) base.View; }
 		}
 
+		/*
+		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations()
+		{
+			if ((SupportedOrientations & DisplayOrientation.Portrait) == DisplayOrientation.Portrait)
+			{
+				return UIInterfaceOrientationMask.Portrait | UIInterfaceOrientationMask.PortraitUpsideDown;
+			}
+			else
+			{
+				return UIInterfaceOrientationMask.LandscapeLeft | UIInterfaceOrientationMask.LandscapeRight;
+			}
+		}*/
+
+		#region Autorotation for iOS 6 or newer
+
+		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations ()
+		{
+			if ((SupportedOrientations & DisplayOrientation.Portrait) == DisplayOrientation.Portrait)
+			{
+				return UIInterfaceOrientationMask.Portrait | UIInterfaceOrientationMask.PortraitUpsideDown;
+			}
+			else
+			{
+				return UIInterfaceOrientationMask.LandscapeLeft | UIInterfaceOrientationMask.LandscapeRight;
+			}
+
+//			return OrientationConverter.ToUIInterfaceOrientationMask(this.SupportedOrientations);
+		}
+		
+		public override bool ShouldAutorotate ()
+		{
+			return _platform.Game.Initialized;
+		}
+		
+		public override UIInterfaceOrientation PreferredInterfaceOrientationForPresentation ()
+		{
+			DisplayOrientation supportedOrientations = OrientationConverter.Normalize(SupportedOrientations);
+			if ((supportedOrientations & DisplayOrientation.LandscapeRight) != 0)
+				return UIInterfaceOrientation.LandscapeRight;
+			else if ((supportedOrientations & DisplayOrientation.LandscapeLeft) != 0)
+				return UIInterfaceOrientation.LandscapeLeft;
+			else
+				return UIInterfaceOrientation.Portrait;
+		}
+
+		#endregion
+
 		public override bool ShouldAutorotateToInterfaceOrientation (UIInterfaceOrientation toInterfaceOrientation)
 		{
 			DisplayOrientation supportedOrientations;
