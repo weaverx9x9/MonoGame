@@ -123,8 +123,8 @@ namespace Microsoft.Xna.Framework.Graphics
 					i *= 2;
 				height = i;
 			}
-			// TODO: kMaxTextureSize = 1024
-			while((width > 1024) || (height > 1024)) 
+			// RB - Changed 1024 to 2048 in order to support Retina
+			while((width > 2048) || (height > 2048)) 
 			{
 				width /= 2;
 				height /= 2;
