@@ -229,7 +229,7 @@ namespace Microsoft.Xna.Framework
         {
 			if(obj is Vector2)
 			{
-				return Equals((Vector2)this);
+				return (Vector2)obj == this;
 			}
 			
             return false;
