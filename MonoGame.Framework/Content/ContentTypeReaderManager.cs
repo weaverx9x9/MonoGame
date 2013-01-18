@@ -108,6 +108,7 @@ namespace Microsoft.Xna.Framework.Content
                 var hArrayMatrixReader = new ArrayReader<Matrix>();
                 var hEnumBlendReader = new EnumReader<Graphics.Blend>();
                 var hNullableRectReader = new NullableReader<Rectangle>();
+                var hDictionaryReader = new DictionaryReader<string, int>();
             }
 #pragma warning restore 0219, 0649
 
