@@ -322,8 +322,8 @@ namespace Microsoft.Xna.Framework
             // values correctly based on the Preferred settings which is causing
             // some problems on some Microsoft samples which we are not handling
             // correctly.
-            graphicsDeviceManager.CreateDevice();
-            applyChanges(graphicsDeviceManager);
+            GraphicsDeviceManager.CreateDevice();
+            applyChanges(GraphicsDeviceManager);
 
             Platform.BeforeInitialize();
             Initialize();
@@ -467,7 +467,7 @@ namespace Microsoft.Xna.Framework
             {
                 previousDisplayHeight = GraphicsDevice.DisplayMode.Height;
                 previousDisplayWidth = GraphicsDevice.DisplayMode.Width;
-                graphicsDeviceManager.ResetClientBounds();
+                GraphicsDeviceManager.ResetClientBounds();
             }
             
             _drawables.ForEachFilteredItem(DrawAction, gameTime);
@@ -602,7 +602,7 @@ namespace Microsoft.Xna.Framework
 
         #endregion Internal Methods
 
-        private GraphicsDeviceManager graphicsDeviceManager
+        private GraphicsDeviceManager GraphicsDeviceManager
         {
             get
             {
