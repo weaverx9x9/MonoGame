@@ -74,11 +74,13 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\iPhone\AppStore</OutputPath>
     <WarningLevel>4</WarningLevel>
     <AssemblyName>MonoGameFrameworkiOS</AssemblyName>
     <CodesignKey>iPhone Developer</CodesignKey>
+    <DefineConstants>IPHONE;GLES</DefineConstants>
+    <additionalargs>/unsafe</additionalargs>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -40,6 +40,7 @@
     <WarningLevel>4</WarningLevel>
     <AssemblyName>LidgrenNetworkiOS</AssemblyName>
     <CodesignKey>iPhone Developer</CodesignKey>
+    <DefineConstants>IOS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
