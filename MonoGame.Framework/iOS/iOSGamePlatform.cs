@@ -100,7 +100,7 @@ namespace Microsoft.Xna.Framework
 			soundControllerInstance = OpenALSoundController.GetInstance;
 			
             Directory.SetCurrentDirectory(NSBundle.MainBundle.ResourcePath);
-
+            
             _applicationObservers = new List<NSObject>();
 
             UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Fade);
