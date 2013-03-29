@@ -398,9 +398,9 @@ namespace Microsoft.Xna.Framework.Graphics
 		
 		public void GetData<T>(int level, Rectangle? rect, T[] data, int startIndex, int elementCount) where T : struct
         {
-#if IPHONE 
+#if OLDIOS
 			throw new NotImplementedException();
-#elif ANDROID
+#elif ANDROID || IPHONE
 			if (data == null)
             {
                 throw new ArgumentException("data cannot be null");
@@ -756,6 +756,51 @@ namespace Microsoft.Xna.Framework.Graphics
 #endif
         }
 
+        public void SaveAsJpeg (string path, int width, int height)
+        {
+#if IPHONE
+            Color[] pixelData = new Color[width * height * GraphicsExtensions.Size (Format)];
+            
+            GetData(pixelData);
+
+            byte[] data = new byte[pixelData.Length * 4];
+            
+            for(int i = 0; i < pixelData.Length; i++) {
+                var offset = i * 4;
+                data[offset+1] = pixelData[i].R;
+                data[offset+2] = pixelData[i].G;
+                data[offset+3] = pixelData[i].B;
+            }
+
+            CGBitmapContext context = null;
+            
+            try {
+                var colorSpace = CGColorSpace.CreateDeviceRGB();
+                context = new CGBitmapContext(data, width, height, 8, 4 * width, colorSpace, CGImageAlphaInfo.NoneSkipFirst);
+                colorSpace.Dispose();
+                context.InterpolationQuality = CGInterpolationQuality.Low;
+                context.SetAllowsAntialiasing(false);
+                
+                UIImage image = UIImage.FromImage(context.ToImage());
+                
+                NSError error = null;
+                NSData imgData = image.AsJPEG();
+                if(imgData.Save (path, false, out error)) {
+                    System.Diagnostics.Debug.WriteLine ("file saved as: " + path);
+                } else {
+                    System.Diagnostics.Debug.WriteLine ("File not saved as: " + path + " because " + error.LocalizedDescription);
+                }
+                
+            } finally {
+                if(context != null) 
+                    context.Dispose();
+            }
+#else 
+            throw new NotImplementedException();
+#endif
+        }
+
+
         public void SaveAsPng(Stream stream, int width, int height)
         {
 #if WINRT
@@ -896,7 +941,7 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 #endif
 
-#if ANDROID
+#if ANDROID || IPHONE
 		private byte[] GetTextureData(int ThreadPriorityLevel)
 		{
 			int framebufferId = -1;
