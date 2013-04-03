@@ -614,7 +614,7 @@ namespace Microsoft.Xna.Framework.Graphics
 #if GLES
             All error = GL.GetError();
             if (error != All.False)
-                ;//throw new MonoGameGLException("GL.GetError() returned " + error.ToString());  // TODO Put this back, I commented this out because I couldn't get debugging to work with this enabled
+                throw new MonoGameGLException("GL.GetError() returned " + error.ToString());  // TODO Put this back, I commented this out because I couldn't get debugging to work with this enabled
 #elif OPENGL
             ErrorCode error = GL.GetError();
             if (error != ErrorCode.NoError)

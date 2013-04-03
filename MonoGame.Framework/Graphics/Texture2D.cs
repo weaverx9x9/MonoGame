@@ -747,11 +747,21 @@ namespace Microsoft.Xna.Framework.Graphics
 #endif
         }
 
-        public void SaveAsJpeg(Stream stream, int width, int height)
+        public void SaveAsJpeg (Stream outStream, int width, int height)
         {
 #if WINRT
             SaveAsImage(BitmapEncoder.JpegEncoderId, stream, width, height);
-#else
+#elif IPHONE
+            int length = width * height * GraphicsExtensions.Size (Format);
+            byte[] buffer = GetTextureData(0);
+
+            CGImage cgImage = CreateRGBImage (buffer);
+            using(UIImage uiImage = UIImage.FromImage (cgImage))
+            {
+                NSData data = uiImage.AsJPEG();
+                WriteNSDataToStream(data, outStream);
+            }
+#else 
             throw new NotImplementedException();
 #endif
         }
@@ -759,52 +769,68 @@ namespace Microsoft.Xna.Framework.Graphics
         public void SaveAsJpeg (string path, int width, int height)
         {
 #if IPHONE
-            Color[] pixelData = new Color[width * height * GraphicsExtensions.Size (Format)];
-            
-            GetData(pixelData);
-
-            byte[] data = new byte[pixelData.Length * 4];
-            
-            for(int i = 0; i < pixelData.Length; i++) {
-                var offset = i * 4;
-                data[offset+1] = pixelData[i].R;
-                data[offset+2] = pixelData[i].G;
-                data[offset+3] = pixelData[i].B;
+            using(FileStream outStream = File.OpenWrite (path))
+            {
+                SaveAsJpeg (outStream, width, height);
             }
-
-            CGBitmapContext context = null;
-            
-            try {
-                var colorSpace = CGColorSpace.CreateDeviceRGB();
-                context = new CGBitmapContext(data, width, height, 8, 4 * width, colorSpace, CGImageAlphaInfo.NoneSkipFirst);
-                colorSpace.Dispose();
-                context.InterpolationQuality = CGInterpolationQuality.Low;
-                context.SetAllowsAntialiasing(false);
-                
-                UIImage image = UIImage.FromImage(context.ToImage());
-                
-                NSError error = null;
-                NSData imgData = image.AsJPEG();
-                if(imgData.Save (path, false, out error)) {
-                    System.Diagnostics.Debug.WriteLine ("file saved as: " + path);
-                } else {
-                    System.Diagnostics.Debug.WriteLine ("File not saved as: " + path + " because " + error.LocalizedDescription);
-                }
-                
-            } finally {
-                if(context != null) 
-                    context.Dispose();
-            }
-#else 
+#else
             throw new NotImplementedException();
 #endif
         }
 
+#if IPHONE
+        private CGImage CreateRGBImage (byte[] data)
+        {
+            CGDataProvider provider = new CGDataProvider(data, 0, data.Length);
+            
+            int bitsPerComponent = 8;
+            int bitsPerPixel = 32;
+            int bytesPerRow = 4 * width;
+            CGColorSpace colorSpace = CGColorSpace.CreateDeviceRGB();
+            
+            CGBitmapFlags bitmapInfo = CGBitmapFlags.ByteOrderDefault;
+            CGColorRenderingIntent renderingIntent = CGColorRenderingIntent.Default;
+            
+            return new CGImage(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider, null, false, renderingIntent);
+        }
+
+
+        private void WriteNSDataToStream (NSData data, Stream outStream)
+        {
+            unsafe {
+                using(UnmanagedMemoryStream imageStream = new UnmanagedMemoryStream((byte*)data.Bytes, data.Length))
+                {
+                    imageStream.CopyTo (outStream);
+                }
+            }
+        }
+#endif
+
+        public void SaveAsPng (string path, int width, int height)
+        {
+#if IPHONE
+            using(FileStream outStream = File.OpenWrite (path))
+            {
+                SaveAsPng (outStream, width, height);
+            }
+#else
+            throw new NotImplementedException();
+#endif
+        }
 
         public void SaveAsPng(Stream stream, int width, int height)
         {
 #if WINRT
             SaveAsImage(BitmapEncoder.PngEncoderId, stream, width, height);
+#elif IPHONE
+            int length = width * height * GraphicsExtensions.Size (Format);
+            byte[] buffer = GetTextureData(0);
+            CGImage cgImage = CreateRGBImage (buffer);
+            using(UIImage uiImage = UIImage.FromImage (cgImage))
+            {
+                NSData data = uiImage.AsPNG();
+                WriteNSDataToStream(data, stream);
+            }
 #else
             throw new NotImplementedException();
 #endif
@@ -941,9 +967,10 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 #endif
 
-#if ANDROID || IPHONE
+
 		private byte[] GetTextureData(int ThreadPriorityLevel)
 		{
+#if ANDROID
 			int framebufferId = -1;
             int renderBufferID = -1;
             
@@ -1015,8 +1042,89 @@ namespace Microsoft.Xna.Framework.Graphics
             GL.BindFramebuffer(All.Framebuffer, 0);
             GraphicsExtensions.CheckGLError();
             return imageInfo;
-		}
+#elif IPHONE
+            /********** Get the current state so we can restore it after ReadPixels is called **********/
+            Rectangle scissorRect = new Rectangle(), 
+            viewportRect = new Rectangle();
+            
+            int oldFrameBuffer = 0, oldRenderBuffer = 0;
+            GL.GetInteger (All.FramebufferBinding, ref oldFrameBuffer);
+            GraphicsExtensions.CheckGLError();
+            GL.GetInteger(All.RenderbufferBinding, ref oldRenderBuffer);
+            GraphicsExtensions.CheckGLError();
+            int[] scissorData = new int[4];
+            int[] viewportData = new int[4];
+            bool scissorTest = false;
+            GL.GetBoolean(All.ScissorTest, ref scissorTest);
+            if(scissorTest) {
+                GL.GetInteger(All.ScissorBox, scissorData);
+                GraphicsExtensions.CheckGLError();
+                scissorRect = new Rectangle(scissorData[0], scissorData[1], scissorData[2], scissorData[3]);
+            }
+            GL.GetInteger (All.Viewport, viewportData);
+            GraphicsExtensions.CheckGLError();
+            viewportRect = new Rectangle(viewportData[0], viewportData[1], viewportData[2], viewportData[3]);
+
+            /**********  Create the FPO's  ************/
+            uint frameBuffer = 0;
+            GL.GenFramebuffers(1, ref frameBuffer);
+            GraphicsExtensions.CheckGLError();
+            GL.BindFramebuffer(All.Framebuffer, frameBuffer);
+            GraphicsExtensions.CheckGLError();
+            
+            uint colorRenderBuffer = 0;
+            GL.GenRenderbuffers(1, ref colorRenderBuffer);
+            GraphicsExtensions.CheckGLError();
+            GL.BindRenderbuffer(All.Renderbuffer, colorRenderBuffer);
+            GraphicsExtensions.CheckGLError();
+            GL.RenderbufferStorage(All.Renderbuffer, All.DepthComponent24Oes, width, height);
+            GraphicsExtensions.CheckGLError();
+            GL.FramebufferRenderbuffer(All.Framebuffer, All.ColorAttachment0, All.Renderbuffer, colorRenderBuffer);
+            GraphicsExtensions.CheckGLError();
+            
+            GL.FramebufferTexture2D(All.Framebuffer, All.ColorAttachment0, All.Texture2D, this.glTexture, 0);
+            GraphicsExtensions.CheckGLError();
+            
+            uint depthRenderBuffer = 0;
+            GL.GenRenderbuffers (1, ref depthRenderBuffer);
+            GL.BindRenderbuffer(All.Renderbuffer, depthRenderBuffer);
+            GL.RenderbufferStorage(All.Renderbuffer, All.DepthComponent16, width, height);
+            GL.FramebufferRenderbuffer(All.Framebuffer, All.DepthAttachment, All.Renderbuffer, depthRenderBuffer);
+            GraphicsExtensions.CheckGLError();
+
+            /************* Check the status of the frame-buffer-objects we just created ***********/
+            All status = GL.CheckFramebufferStatus(All.Framebuffer);
+            if (status != All.FramebufferComplete)
+                throw new Exception("Error creating framebuffer: " + status);   
+
+            /********** This is where the pixel data will go ************/
+            int length = width * height * GraphicsExtensions.Size (Format);
+            byte[] buffer = new byte[length];
+
+            /********* Read the pixels *****************/
+            GL.ReadPixels(0, 0, width, height, All.Rgba, All.UnsignedByte, buffer);
+            GraphicsExtensions.CheckGLError();
+
+            /******* Delete the FBO's we created ******/
+            GL.DeleteRenderbuffers(1, ref depthRenderBuffer);
+            GL.DeleteFramebuffers(1, ref colorRenderBuffer);
+            GL.DeleteFramebuffers(1, ref frameBuffer);
+            GraphicsExtensions.CheckGLError();
+
+            /************* Restore state **************/
+            if(scissorTest) {
+                GL.Enable (All.ScissorTest);
+                GL.Scissor(scissorRect.X, scissorRect.Y, scissorRect.Width, scissorRect.Height);
+                GraphicsExtensions.CheckGLError();
+            }
+            GL.Viewport(viewportRect.X, viewportRect.Y, viewportRect.Width, viewportRect.Height);
+            GL.BindFramebuffer(All.Framebuffer, oldFrameBuffer);
+            GL.BindRenderbuffer(All.Renderbuffer, oldRenderBuffer);
+            GraphicsExtensions.CheckGLError();
+            return buffer;
 #endif
+        }
+
 	}
 }
 
