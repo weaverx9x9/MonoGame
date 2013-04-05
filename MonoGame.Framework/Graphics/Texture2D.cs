@@ -752,13 +752,15 @@ namespace Microsoft.Xna.Framework.Graphics
 #if WINRT
             SaveAsImage(BitmapEncoder.JpegEncoderId, stream, width, height);
 #elif IPHONE
-            int length = width * height * GraphicsExtensions.Size (Format);
+            int length = this.width * this.height * GraphicsExtensions.Size (Format);
             byte[] buffer = GetTextureData(0);
 
             CGImage cgImage = CreateRGBImage (buffer);
             using(UIImage uiImage = UIImage.FromImage (cgImage))
             {
-                NSData data = uiImage.AsJPEG();
+                SizeF size = new SizeF(width, height);
+                UIImage scaledImage = uiImage.Scale(size);
+                NSData data = scaledImage.AsJPEG();
                 WriteNSDataToStream(data, outStream);
             }
 #else 
@@ -823,11 +825,14 @@ namespace Microsoft.Xna.Framework.Graphics
 #if WINRT
             SaveAsImage(BitmapEncoder.PngEncoderId, stream, width, height);
 #elif IPHONE
-            int length = width * height * GraphicsExtensions.Size (Format);
+            int length = this.width * this.height * GraphicsExtensions.Size (Format);
             byte[] buffer = GetTextureData(0);
+
             CGImage cgImage = CreateRGBImage (buffer);
             using(UIImage uiImage = UIImage.FromImage (cgImage))
             {
+                SizeF size = new SizeF(width, height);
+                uiImage.Scale(size);
                 NSData data = uiImage.AsPNG();
                 WriteNSDataToStream(data, stream);
             }

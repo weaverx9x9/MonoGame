@@ -271,7 +271,7 @@ namespace Microsoft.Xna.Framework.GamerServices
 
 			if (!(result is KeyboardInputAsyncResult))
 				throw new ArgumentException ("result");
-
+            IsVisible = false;
 			return (result as KeyboardInputAsyncResult).GetResult();
 		}
 
