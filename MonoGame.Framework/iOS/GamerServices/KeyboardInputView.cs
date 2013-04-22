@@ -114,9 +114,13 @@ namespace Microsoft.Xna.Framework {
 			_textFieldContainer = new UIScrollView(new RectangleF(0, 0, 100, 100));
 
 			_textField = new UITextField (_textFieldContainer.Bounds);
-			_textField.AutoresizingMask =
+			/*
+            _textField.AutoresizingMask =
 				UIViewAutoresizing.FlexibleWidth |
 				UIViewAutoresizing.FlexibleHeight;
+    */          
+            _textField.AutoresizingMask =
+                UIViewAutoresizing.None;
 			_textField.BorderStyle = UITextBorderStyle.RoundedRect;
 			_textField.Delegate = new TextFieldDelegate (this);
 
@@ -127,7 +131,9 @@ namespace Microsoft.Xna.Framework {
 			Add (_description);
 			Add (_textFieldContainer);
 
-			AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+			//AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+            AutoresizingMask = UIViewAutoresizing.None;
+            
 			AutosizesSubviews = false;
 			Opaque = true;
 			BackgroundColor = UIColor.FromRGB (0xC5, 0xCC, 0xD4);
