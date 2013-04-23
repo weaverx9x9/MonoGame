@@ -130,7 +130,7 @@ namespace Microsoft.Xna.Framework {
 			    InterfaceOrientation == UIInterfaceOrientation.LandscapeRight) {
 				var temp = keyboardSize.Width;
 				keyboardSize.Width = keyboardSize.Height;
-				keyboardSize.Height = temp; // TODO Changed this
+				keyboardSize.Height = temp;
 			}
 
 			var view = (KeyboardInputView)View;

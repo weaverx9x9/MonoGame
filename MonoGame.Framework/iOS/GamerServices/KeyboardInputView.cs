@@ -84,6 +84,8 @@ namespace Microsoft.Xna.Framework {
 		private readonly UITextField _textField;
 		private readonly UIScrollView _textFieldContainer;
 
+        // TODO This is the class that needs to be edited to make the popup dialog 
+        // look right.
 		public KeyboardInputView (RectangleF frame)
 			: base(frame)
 		{
@@ -113,14 +115,7 @@ namespace Microsoft.Xna.Framework {
 
 			_textFieldContainer = new UIScrollView(new RectangleF(0, 0, 100, 100));
 
-			_textField = new UITextField (_textFieldContainer.Bounds);
-			/*
-            _textField.AutoresizingMask =
-				UIViewAutoresizing.FlexibleWidth |
-				UIViewAutoresizing.FlexibleHeight;
-    */          
-            _textField.AutoresizingMask =
-                UIViewAutoresizing.None;
+			_textField = new UITextField (_textFieldContainer.Bounds);      
 			_textField.BorderStyle = UITextBorderStyle.RoundedRect;
 			_textField.Delegate = new TextFieldDelegate (this);
 
@@ -131,7 +126,7 @@ namespace Microsoft.Xna.Framework {
 			Add (_description);
 			Add (_textFieldContainer);
 
-			//AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+			AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
             AutoresizingMask = UIViewAutoresizing.None;
             
 			AutosizesSubviews = false;
