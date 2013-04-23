@@ -172,7 +172,6 @@ namespace Microsoft.Xna.Framework {
         public override bool ShouldAutorotate ()
         {
             return false;
-            //return true; // TODO Changed this from return true to return false on 4/22/13
         }
         
         public override UIInterfaceOrientation PreferredInterfaceOrientationForPresentation ()
