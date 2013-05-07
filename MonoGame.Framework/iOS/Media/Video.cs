@@ -130,17 +130,17 @@ namespace Microsoft.Xna.Framework.Media
             get { return _height; }
         }
         
-        private VideoSoundTrackType _videoSoundTrackType;
+        //private VideoSoundTrackType _videoSoundTrackType;
         /// <summary>
         /// Gets the VideoSoundTrackType of the <see cref="Video" />.
         /// </summary>
         /// <value>
         /// The type of soundtrack in the video.
         /// </value>
-        public VideoSoundTrackType VideoSoundTrackType
-        {
-            get { return _videoSoundTrackType; }
-        }
+       // public VideoSoundTrackType VideoSoundTrackType
+       // {
+       //     get { return _videoSoundTrackType; }
+       // }
         
         // FIXME: Internal properties are not ideal.  There may be no other
         //        choice for a sealed class.  Except a partial class.  Still,
