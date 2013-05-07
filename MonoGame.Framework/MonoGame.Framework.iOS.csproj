@@ -301,8 +301,6 @@
     <Compile Include="iOS\iOSGameView_GLAbstraction.cs" />
     <Compile Include="iOS\iOSGameView_Touch.cs" />
     <Compile Include="iOS\PowerStatus.cs" />
-    <Compile Include="Media\MediaSource.cs" />
-    <Compile Include="Media\MediaLibrary.cs" />
     <Compile Include="iOS\Media\Video.cs" />
     <Compile Include="iOS\Media\VideoPlayer.cs" />
     <Compile Include="iOS\GamerServices\Guide.cs" />
@@ -438,6 +436,9 @@
     <Compile Include="Microsoft\Devices\Sensors\SensorState.cs" />
     <Compile Include="Microsoft\Devices\Sensors\AccelerometerFailedException.cs" />
     <Compile Include="Input\Touch\PointerEvent.cs" />
+    <Compile Include="iOS\Media\VideoPlayer+StreamingAudioPlayer.cs" />
+    <Compile Include="iOS\Media\MediaLibrary.cs" />
+    <Compile Include="iOS\Media\MediaSource.cs" />
   </ItemGroup>
   <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

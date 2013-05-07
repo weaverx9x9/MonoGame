@@ -234,6 +234,7 @@ namespace Microsoft.Xna.Framework
 #endif
         private static Game _instance = null;
         internal static Game Instance { get { return Game._instance; } }
+        public static Game StatInstance { get {return Game._instance; } }
 
         public LaunchParameters LaunchParameters { get; private set; }
 
