@@ -797,12 +797,16 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
 
-        private void WriteNSDataToStream (NSData data, Stream outStream)
+        void WriteNSDataToStream (NSData data, Stream outStream)
         {
             unsafe {
                 using(UnmanagedMemoryStream imageStream = new UnmanagedMemoryStream((byte*)data.Bytes, data.Length))
                 {
                     imageStream.CopyTo (outStream);
+                    imageStream.Close ();
+                    imageStream.Dispose ();
+                    outStream.Close ();
+                    outStream.Dispose ();
                 }
             }
         }

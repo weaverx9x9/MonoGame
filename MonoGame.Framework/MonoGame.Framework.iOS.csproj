@@ -438,6 +438,9 @@
     <Compile Include="Microsoft\Devices\Sensors\SensorState.cs" />
     <Compile Include="Microsoft\Devices\Sensors\AccelerometerFailedException.cs" />
     <Compile Include="Input\Touch\PointerEvent.cs" />
+    <Compile Include="Graphics\VideoPlayer+StreamingAudioPlayer.cs">
+      <DependentUpon>SpriteBlendMode.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(ProgramFiles)\MSBuild\MonoTouch\Novell.MonoTouch.Common.targets" Condition="'$(windir)' != '' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -46,7 +46,7 @@ using MonoTouch.UIKit;
 
 namespace Microsoft.Xna.Framework.Media
 {
-    public sealed class VideoPlayer
+    public partial class VideoPlayer
     {
 		private Video  _video;
 		private MediaState _state;

@@ -475,6 +475,8 @@ namespace Microsoft.Xna.Framework
 
                 _gameTime.IsRunningSlowly = (_accumulatedElapsedTime > TargetElapsedTime);
 
+                _gameTime.ActualGameTime = _accumulatedElapsedTime;
+
                 // Perform as many full fixed length time steps as we can.
                 while (_accumulatedElapsedTime >= TargetElapsedTime)
                 {
