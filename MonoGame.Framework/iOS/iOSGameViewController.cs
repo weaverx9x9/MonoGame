@@ -80,6 +80,7 @@ namespace Microsoft.Xna.Framework {
 			if (platform == null)
 				throw new ArgumentNullException ("platform");
 			_platform = platform;
+
 			SupportedOrientations = DisplayOrientation.Default;
 		}
 
@@ -108,7 +109,12 @@ namespace Microsoft.Xna.Framework {
 		public new iOSGameView View {
 			get { return (iOSGameView) base.View; }
 		}
-
+        /*
+        public override bool PrefersStatusBarHidden ()
+        {
+            return true;
+        }
+*/
         #region Autorotation for iOS 5 or older
 		public override bool ShouldAutorotateToInterfaceOrientation (UIInterfaceOrientation toInterfaceOrientation)
 		{
